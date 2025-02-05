@@ -15,6 +15,7 @@ export const createUserController = async (req,res) =>{
     try{
         const user = await userService.createUser(req.body);
         const token = await user.generateJWT();
+        delete user._doc.password;
         return res.status(201).json({
             user,
             token
@@ -53,6 +54,8 @@ export const loginController = async(req,res) => {
 
         const token = await user.generateJWT();
 
+        delete user._doc.password;
+
         return res.status(200).json({user,token});
 
     } catch(error){
@@ -81,3 +84,23 @@ export const logoutController = async (req,res) => {
         return res.status(400).send(error.message);
     }
 }
+
+export const getAllUsersController = async(req,res) => {
+    try {
+        const loggedInUser = await userModel.findOne({
+            email: req.user.email
+        });
+
+        const allUsers = await userService.getAllUsers({userId:loggedInUser._id})
+        
+        return res.status(200).json({
+            users:allUsers
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({
+            errors:error
+        });
+    }
+}
+
