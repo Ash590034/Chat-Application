@@ -16,7 +16,7 @@ export const initializeSocket = (projectId) => {
     });
 
     return socketInstance;
-
+    
 }
 
 export const receiveMessage = (eventName, cb) => {
